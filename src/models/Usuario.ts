@@ -23,6 +23,10 @@ const usuarioSchema = new Schema({
     type: Number,
     required: true,
   },
+  celular: {
+    type: Number,
+    required: true,
+  },
 });
 
 type usuarioDocument = InferSchemaType<typeof usuarioSchema> & Document;
