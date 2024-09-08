@@ -5,6 +5,17 @@ import { Usuario } from "../models/Usuario";
 import { validator } from "../utils/validator";
 import env from "../config/envs";
 
+export const getTodosLosUsuarios = async (req: Request, res: Response) => {
+  try {
+    const users = await Usuario.find();
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error getting users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const crearUsuario = async (req: Request, res: Response) => {
   const { nombre, apellido, email, password, DNI, celular } = req.body;
 
