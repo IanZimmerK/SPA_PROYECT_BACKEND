@@ -153,7 +153,8 @@ export const getTurnos = async (req: Request, res: Response) => {
 
 export const crearTurno = async (req: Request, res: Response) => {
   try {
-    const { servicioId, usuarioId, fecha, time } = req.body;
+    const usuarioId = req.user?._id;
+    const { servicioId, fecha, time } = req.body;
 
     // Verifica que los datos requeridos estén presentes
     if (!servicioId || !usuarioId || !fecha || !time) {

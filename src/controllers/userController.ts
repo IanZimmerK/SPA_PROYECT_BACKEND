@@ -57,7 +57,7 @@ export const crearUsuario = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password, userType } = req.body;
+    const { email, password } = req.body;
 
     // Validar la entrada
     const validation = validator("nombre", email, password);
