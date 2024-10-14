@@ -143,7 +143,8 @@ export const getTurnos = async (req: Request, res: Response) => {
     // Obtener todos los turnos y hacer populate para los campos de usuario y servicio
     const turnos = await Turno.find()
       .populate("usuario") // Campos del modelo Usuario
-      .populate("servicio"); // Campos del modelo Servicio
+      .populate("servicio") // Campos del modelo Servicio
+      .populate("profesional");
 
     res.status(200).json(turnos);
   } catch (error) {
@@ -154,10 +155,10 @@ export const getTurnos = async (req: Request, res: Response) => {
 export const crearTurno = async (req: Request, res: Response) => {
   try {
     const usuarioId = req.user?._id;
-    const { servicioId, fecha, time } = req.body;
+    const { servicioId, profesionalId, fecha, time } = req.body;
 
     // Verifica que los datos requeridos estén presentes
-    if (!servicioId || !usuarioId || !fecha || !time) {
+    if (!servicioId || !usuarioId || !profesionalId || !fecha || !time) {
       return res.status(400).json({ mensaje: "Faltan datos requeridos." });
     }
 
@@ -173,22 +174,32 @@ export const crearTurno = async (req: Request, res: Response) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado." });
     }
 
+    // Verifica que el profesional exista
+    const profesional = await Usuario.findById(profesionalId);
+    if (!profesional) {
+      return res.status(404).json({ mensaje: "Profesional no encontrado." });
+    }
+
+    // Verifica si el turno ya está reservado para esa fecha y hora
     const turnoExistente = await Turno.findOne({
       servicio: servicioId,
       fecha: fecha,
       hora: time,
+      profesional: profesionalId, // Verifica si el profesional ya tiene un turno en esa fecha y hora
     });
 
     if (turnoExistente) {
-      return res
-        .status(400)
-        .json({ error: "El turno ya está reservado para esta fecha y hora." });
+      return res.status(400).json({
+        error:
+          "El turno ya está reservado para esta fecha y hora con el profesional seleccionado.",
+      });
     }
 
     // Crea el nuevo turno
     const nuevoTurno = new Turno({
       servicio: servicioId,
       usuario: usuarioId,
+      profesional: profesionalId,
       fecha: new Date(fecha),
       hora: time,
     });

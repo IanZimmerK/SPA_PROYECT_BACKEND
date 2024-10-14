@@ -16,8 +16,29 @@ export const getTodosLosUsuarios = async (req: Request, res: Response) => {
   }
 };
 
+export const getProfesionales = async (req: Request, res: Response) => {
+  try {
+    // Filtrar usuarios con userType "profesional"
+    const profesionales = await Usuario.find({ userType: "profesional" });
+
+    // Si no hay profesionales, retornar un mensaje
+    if (profesionales.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron profesionales." });
+    }
+
+    res.json(profesionales);
+  } catch (error) {
+    console.error("Error al obtener profesionales:", error);
+    res.status(500).json({ message: "Error al obtener profesionales" });
+  }
+};
+
 export const crearUsuario = async (req: Request, res: Response) => {
-  const { nombre, apellido, email, password, DNI, celular } = req.body;
+  const { nombre, apellido, email, password, DNI, celular, userType } =
+    req.body;
+  console.log(req.body);
 
   try {
     // Verificar si el usuario ya existe
@@ -37,6 +58,7 @@ export const crearUsuario = async (req: Request, res: Response) => {
       password: hashedPassword,
       DNI,
       celular,
+      userType, // Guardar si es cliente o profesional
     });
 
     // Guardar el usuario en la base de datos
@@ -44,7 +66,7 @@ export const crearUsuario = async (req: Request, res: Response) => {
 
     // Generar el token JWT
     const token = jwt.sign(
-      { id: newUser._id, email: newUser.email },
+      { id: newUser._id, email: newUser.email, userType: newUser.userType },
       process.env.JWT_SECRET || "secretKey", // Usa una clave secreta segura desde tus variables de entorno
       { expiresIn: "1h" } // Ajusta el tiempo de expiración según tu necesidad
     );

@@ -1,6 +1,6 @@
-import moongose, { Document, InferSchemaType } from "mongoose";
+import mongoose, { Document, InferSchemaType } from "mongoose";
 
-const { Schema } = moongose;
+const { Schema } = mongoose;
 
 const usuarioSchema = new Schema({
   nombre: {
@@ -14,6 +14,7 @@ const usuarioSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true, // Asegúrate de que el correo electrónico sea único
   },
   password: {
     type: String,
@@ -27,10 +28,15 @@ const usuarioSchema = new Schema({
     type: Number,
     required: true,
   },
+  userType: {
+    type: String,
+    enum: ["cliente", "profesional", "admin"], // Definimos los valores permitidos
+    required: true, // Aseguramos que este campo sea requerido
+  },
 });
 
 type usuarioDocument = InferSchemaType<typeof usuarioSchema> & Document;
 
-const Usuario = moongose.model<usuarioDocument>("Usuario", usuarioSchema);
+const Usuario = mongoose.model<usuarioDocument>("Usuario", usuarioSchema);
 
 export { Usuario };

@@ -4,6 +4,7 @@ import { Schema, model, Document, ObjectId } from "mongoose";
 interface ITurno extends Document {
   servicio: ObjectId;
   usuario: ObjectId;
+  profesional: ObjectId; // Nuevo campo para el profesional
   fecha: Date;
   hora: string;
 }
@@ -18,6 +19,11 @@ const turnoSchema = new Schema<ITurno>({
   usuario: {
     type: Schema.Types.ObjectId,
     ref: "Usuario", // Referencia al modelo de Usuario
+    required: true,
+  },
+  profesional: {
+    type: Schema.Types.ObjectId,
+    ref: "Usuario", // Referencia al modelo de Profesional (asumiendo que es del mismo modelo Usuario)
     required: true,
   },
   fecha: {
