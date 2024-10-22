@@ -30,7 +30,7 @@ const usuarioSchema = new Schema({
   },
   userType: {
     type: String,
-    enum: ["cliente", "profesional", "admin"], // Definimos los valores permitidos
+    enum: ["cliente", "profesional", "admin", "secretaria"], // Definimos los valores permitidos
     required: true, // Aseguramos que este campo sea requerido
   },
 });
